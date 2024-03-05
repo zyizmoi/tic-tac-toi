@@ -1,0 +1,23 @@
+{
+  "name": "test-trpc",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "workspaces": [
+    "packages/frontend",
+    "packages/backend"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zyizmoi/test-trpc.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/zyizmoi/test-trpc/issues"
+  },
+  "homepage": "https://github.com/zyizmoi/test-trpc#readme"
+}
