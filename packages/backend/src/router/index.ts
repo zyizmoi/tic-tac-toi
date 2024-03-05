@@ -1,9 +1,9 @@
-import { mergeRouters } from "../trpc";
-import ExampleRouter from "./example";
+import { mergeRouters } from '../trpc'
+import SessionRouter from './session'
 
-type AppRouter = typeof appRouter;
+type AppRouter = typeof appRouter
 
-const appRouter = mergeRouters(ExampleRouter);
+const appRouter = mergeRouters(SessionRouter)
 
-export default appRouter;
-export type { AppRouter };
+export default appRouter
+export type { AppRouter }
