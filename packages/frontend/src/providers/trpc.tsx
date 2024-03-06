@@ -5,9 +5,9 @@ import { queryClient } from './query'
 const trpcClient = trpc.createClient({
   links: [
     httpBatchLink({
-      url: `${import.meta.env.VITE_TRPC_SERVER_URL}`,
-    }),
-  ],
+      url: `http://localhost:5001/trpc`
+    })
+  ]
 })
 
 const TRPCProvider = ({ children }: { children: React.ReactNode }) => {
