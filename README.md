@@ -1,6 +1,6 @@
 # Tic-Tac-Toi
 
-(WIP) Tic tac toe game with slighlty modified AI (for educational purposes). Also a famliarisation project for using TRPC with NPM workspaces + Supabase DB.
+(WIP) Tic tac toe game with slighlty modified AI (for educational purposes). Also a famliarisation project for using TRPC with NPM workspaces + Supabase DB. Adapted from https://github.com/mnik01/viteRPC.
 
 ## Setup
 
