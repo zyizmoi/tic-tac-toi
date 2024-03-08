@@ -183,8 +183,8 @@ const App = () => {
     })
   }
 
-  const { isLoading, data: sessionData } = trpc.getSession.useQuery(
-    { sessionKey: 'tttkey123' },
+  const { data: sessionData } = trpc.getSession.useQuery(
+    { sessionKey: '' }, // fill in accordingly
     {
       refetchInterval: 0,
       onSuccess: (data) => {
