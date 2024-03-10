@@ -5,9 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "frontend": "npm run dev -w packages/frontend",
-    "backend": "npm run dev -w packages/backend",
-    "all": " npm run frontend & npm run backend"
+    "frontend": "pnpm --filter ./packages/frontend run dev",
+    "backend": "pnpm --filter ./packages/backend run dev",
+    "all": "pnpm run frontend && pnpm run backend "
   },
   "workspaces": [
     "packages/frontend",
