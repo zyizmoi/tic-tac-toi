@@ -1,16 +1,10 @@
 import { useCallback, useEffect, useState } from 'react'
 import trpc from './utils/trpc'
-import {
-  boardStateType,
-  gameProgressionType,
-  gameRole,
-  gameStateType,
-  keys
-} from './types/game.types'
+import { boardStateType, gameProgressionType, gameRole, gameStateType, keys, winnerPlayer } from './types/game.types'
 import { Box, Button, Typography } from '@mui/material'
 import { Entries } from 'type-fest'
 
-const baseState = {
+const baseState: gameStateType = {
   opponent: gameRole.x,
   player: gameRole.o,
   board: {
@@ -22,7 +16,7 @@ const baseState = {
     '6': null,
     '7': null,
     '8': null,
-    '9': null
+    '9': null,
   },
   opponentMoves: [],
   playerTurn: false,
@@ -34,7 +28,7 @@ const baseState = {
     line357: [3, 5, 7],
     line369: [3, 6, 9],
     line456: [4, 5, 6],
-    line789: [7, 8, 9]
+    line789: [7, 8, 9],
   },
   playerProgression: {
     line123: [],
@@ -44,7 +38,7 @@ const baseState = {
     line357: [],
     line369: [],
     line456: [],
-    line789: []
+    line789: [],
   },
   opponentProgression: {
     line123: [],
@@ -54,45 +48,61 @@ const baseState = {
     line357: [],
     line369: [],
     line456: [],
-    line789: []
-  }
+    line789: [],
+  },
+  winner: null,
+  winningLine: null,
 }
 
 const App = () => {
-  const [gameState, setGameState] = useState<gameStateType>(
-    structuredClone(baseState)
-  )
+  const [gameState, setGameState] = useState<gameStateType>(structuredClone(baseState))
 
   const updateGameProgression = useCallback(
     (move: number, role: string) => {
       const tmpProgression = gameState.progression
       const tmpPlayerProgression = gameState.playerProgression
       const tmpOpponentProgression = gameState.opponentProgression
-      ;(
-        Object.entries(gameState.progression) as Entries<
-          typeof gameState.progression
-        >
-      ).forEach((line) => {
+      let tmpWinner = gameState.winner
+      let tmpWinningLine = gameState.winningLine
+
+      ;(Object.entries(gameState.progression) as Entries<typeof gameState.progression>).forEach((line) => {
         const tmpIndex = line[1].findIndex((value) => {
           return value === move
         })
+
         if (tmpIndex !== -1) {
           tmpProgression[line[0]].splice(tmpIndex, 1)
 
           if (role === 'player') {
             tmpPlayerProgression[line[0]].push(move)
+
+            //check win condition
+            if (tmpPlayerProgression[line[0]].length === 3) {
+              tmpWinner = winnerPlayer.player
+              tmpWinningLine = tmpPlayerProgression[line[0]]
+            }
           } else {
             tmpOpponentProgression[line[0]].push(move)
+
+            //check win condition
+            if (tmpOpponentProgression[line[0]].length === 3) {
+              tmpWinner = winnerPlayer.opponent
+              tmpWinningLine = tmpOpponentProgression[line[0]]
+            }
           }
         }
       })
+
+      console.log('winner', tmpWinner, tmpWinningLine)
 
       setGameState((prev) => {
         return {
           ...prev,
           progression: tmpProgression,
           playerProgression: tmpPlayerProgression,
-          opponentProgression: tmpOpponentProgression
+          opponentProgression: tmpOpponentProgression,
+          winner: tmpWinner,
+          winningLine: tmpWinningLine,
         }
       })
     },
@@ -103,13 +113,27 @@ const App = () => {
     const tmpOpponentMoves = gameState.opponentMoves
     const tmpBoard = gameState.board
 
-    const dangerLine = (
-      Object.entries(
-        gameState.playerProgression
-      ) as Entries<gameProgressionType>
-    ).find((line) => {
+    const winningLine = (Object.entries(gameState.opponentProgression) as Entries<gameProgressionType>).find((line) => {
       return line[1].length === 2 && gameState.progression[line[0]].length > 0
     })
+
+    if (winningLine) {
+      const move = gameState.progression[winningLine[0]][0]
+      tmpBoard[keys[move - 1]] = gameState.opponent
+      updateGameProgression(move, 'opponent')
+      setGameState((prev) => {
+        return {
+          ...prev,
+          board: tmpBoard,
+        }
+      })
+      return
+    }
+
+    const dangerLine = (Object.entries(gameState.playerProgression) as Entries<gameProgressionType>).find((line) => {
+      return line[1].length === 2 && gameState.progression[line[0]].length > 0
+    })
+
     if (dangerLine) {
       const move = gameState.progression[dangerLine[0]][0]
       tmpBoard[keys[move - 1]] = gameState.opponent
@@ -118,7 +142,7 @@ const App = () => {
         return {
           ...prev,
           board: tmpBoard,
-          playerTurn: true
+          playerTurn: true,
         }
       })
       return
@@ -136,7 +160,7 @@ const App = () => {
             ...prev,
             board: tmpBoard,
             opponentMoves: tmpOpponentMoves,
-            playerTurn: true
+            playerTurn: true,
           }
         })
         return
@@ -148,7 +172,7 @@ const App = () => {
     (sq: keyof boardStateType) => {
       const tmpBoard = gameState.board
 
-      if (tmpBoard[sq] || !gameState.playerTurn) return
+      if (tmpBoard[sq] || !gameState.playerTurn || gameState.winner) return
 
       tmpBoard[sq] = gameState.player
       updateGameProgression(Number(sq), 'player')
@@ -156,45 +180,34 @@ const App = () => {
         return { ...prev, board: tmpBoard, playerTurn: false }
       })
     },
-    [
-      gameState.board,
-      gameState.player,
-      gameState.playerTurn,
-      updateGameProgression
-    ]
+    [gameState.board, gameState.player, gameState.playerTurn, gameState.winner, updateGameProgression]
   )
 
   useEffect(() => {
-    if (!gameState.playerTurn) {
+    if (!gameState.playerTurn && gameState.winner === null) {
       setTimeout(handleOpponentTurn, 200)
     }
-  }, [
-    gameState.board,
-    gameState.opponent,
-    gameState.opponentMoves,
-    gameState.playerTurn,
-    handleOpponentTurn
-  ])
+  }, [gameState.board, gameState.opponent, gameState.opponentMoves, gameState.playerTurn, gameState.winner, handleOpponentTurn])
 
   const handleReset = () => {
     setGameState({
       ...structuredClone(baseState),
-      opponentMoves: structuredClone(sessionData?.data.session.ai_moves) ?? []
+      opponentMoves: structuredClone(sessionData?.data.session.ai_moves) ?? [],
     })
   }
 
   const { data: sessionData } = trpc.getSession.useQuery(
-    { sessionKey: '' }, // fill in accordingly
+    { sessionKey: 'tttkey123' }, // fill in accordingly
     {
       refetchInterval: 0,
       onSuccess: (data) => {
         setGameState((prev) => {
           return {
             ...prev,
-            opponentMoves: structuredClone(data.data.session.ai_moves)
+            opponentMoves: structuredClone(data.data.session.ai_moves),
           }
         })
-      }
+      },
     }
   )
 
@@ -206,15 +219,18 @@ const App = () => {
         justifyContent: 'center',
         alignItems: 'center',
         flexDirection: 'column',
-        rowGap: '5%'
+        rowGap: '5%',
       }}
     >
+      <Typography variant='h5' sx={{ height: '1.5rem' }}>
+        {gameState.winner === null ? ' ' : gameState.winner === winnerPlayer.opponent ? 'Oppnent wins' : 'Player wins'}
+      </Typography>
       <Box
         sx={{
           display: 'grid',
           gap: '5px',
           gridTemplateColumns: 'repeat(3, 1fr)',
-          width: '75%'
+          width: '75%',
         }}
       >
         {keys.map((sq, idx) => {
@@ -224,12 +240,12 @@ const App = () => {
               sx={{
                 width: '100%',
                 aspectRatio: '1/1',
-                backgroundColor: '#ffffff',
+                backgroundColor: gameState.winningLine?.includes(Number(sq)) ? '#B4D3B2' : '#ffffff',
                 borderRadius: '25%',
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
-                position: 'relative'
+                position: 'relative',
               }}
               onClick={() => {
                 handlePlayerTurn(sq)
@@ -238,11 +254,7 @@ const App = () => {
               <Typography component='div' sx={{ fontSize: '3rem' }}>
                 {gameState.board[sq] ?? ''}
               </Typography>
-              <Typography
-                sx={{ position: 'absolute', top: '5px', left: '5px' }}
-              >
-                {idx + 1}
-              </Typography>
+              <Typography sx={{ position: 'absolute', top: '5px', left: '5px' }}>{idx + 1}</Typography>
             </Box>
           )
         })}

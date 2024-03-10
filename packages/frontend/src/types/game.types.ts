@@ -1,6 +1,11 @@
 export enum gameRole {
   x = 'X',
-  o = 'O'
+  o = 'O',
+}
+
+export enum winnerPlayer {
+  player,
+  opponent,
 }
 
 export interface boardStateType {
@@ -24,19 +29,11 @@ export interface gameStateType {
   progression: gameProgressionType
   playerProgression: gameProgressionType
   opponentProgression: gameProgressionType
+  winner: winnerPlayer | null
+  winningLine: number[] | null
 }
 
-export const keys: (keyof boardStateType)[] = [
-  '1',
-  '2',
-  '3',
-  '4',
-  '5',
-  '6',
-  '7',
-  '8',
-  '9'
-]
+export const keys: (keyof boardStateType)[] = ['1', '2', '3', '4', '5', '6', '7', '8', '9']
 
 export interface gameProgressionType {
   line123: number[]
