@@ -93,8 +93,6 @@ const App = () => {
         }
       })
 
-      console.log('winner', tmpWinner, tmpWinningLine)
-
       setGameState((prev) => {
         return {
           ...prev,
@@ -223,7 +221,7 @@ const App = () => {
       }}
     >
       <Typography variant='h5' sx={{ height: '1.5rem' }}>
-        {gameState.winner === null ? ' ' : gameState.winner === winnerPlayer.opponent ? 'Oppnent wins' : 'Player wins'}
+        {gameState.winner === null ? ' ' : gameState.winner === winnerPlayer.opponent ? 'Opponent wins' : 'Player wins'}
       </Typography>
       <Box
         sx={{
