@@ -1,6 +1,5 @@
 // Imports
 // ========================================================
-import React from 'react'
 import ReactDOM from 'react-dom/client'
 import RootProvider from './providers'
 import App from './App'
