@@ -235,6 +235,7 @@ export const Component = () => {
           gap: '5px',
           gridTemplateColumns: 'repeat(3, 1fr)',
           width: '75%',
+          maxWidth: '600px',
         }}
       >
         {keys.map((sq, idx) => {
@@ -258,7 +259,7 @@ export const Component = () => {
               <Typography component='div' sx={{ fontSize: '3rem' }}>
                 {gameState.board[sq] ?? ''}
               </Typography>
-              <Typography sx={{ position: 'absolute', top: '5px', left: '5px' }}>{idx + 1}</Typography>
+              <Typography sx={{ position: 'absolute', top: '10%', left: '10%' }}>{idx + 1}</Typography>
             </Box>
           )
         })}
