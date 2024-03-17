@@ -1,5 +1,5 @@
 import { getSessionParamsType } from '../types/session.types'
-import { getSession } from '../services/session'
+import { getSession } from '../model/session'
 import { TRPCError } from '@trpc/server'
 
 export const getSessionHandler = async (params: getSessionParamsType) => {

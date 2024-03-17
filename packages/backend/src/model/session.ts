@@ -1,4 +1,4 @@
-import { supabase } from '../utils/supabase'
+import { supabase } from '../database/supabase'
 
 export const getSession = async (sessionKey: string) => {
   const { data: sessionData, error } = await supabase
