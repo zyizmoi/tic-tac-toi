@@ -2,15 +2,16 @@
 // ========================================================
 import ReactDOM from 'react-dom/client'
 import RootProvider from './providers'
-import App from './App'
 import './index.css'
+import { RouterProvider } from 'react-router-dom'
+import { router } from './router/Router'
 
 // Render
 // ========================================================
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   // <React.StrictMode>
   <RootProvider>
-    <App />
+    <RouterProvider router={router} />
   </RootProvider>
   // </React.StrictMode>
 )

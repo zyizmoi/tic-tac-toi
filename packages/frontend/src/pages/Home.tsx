@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useState } from 'react'
-import trpc from './utils/trpc'
-import { boardStateType, gameProgressionType, gameRole, gameStateType, keys, winnerPlayer } from './types/game.types'
+import trpc from '../utils/trpc'
+import { boardStateType, gameProgressionType, gameRole, gameStateType, keys, winnerPlayer } from '../types/game.types'
 import { Box, Button, Typography } from '@mui/material'
 import { Entries } from 'type-fest'
+import { useParams } from 'react-router-dom'
 
 const baseState: gameStateType = {
   opponent: gameRole.x,
@@ -54,8 +55,10 @@ const baseState: gameStateType = {
   winningLine: null,
 }
 
-const App = () => {
+export const Component = () => {
   const [gameState, setGameState] = useState<gameStateType>(structuredClone(baseState))
+  const params = useParams()
+  const sessionKey = params.sessionKey ?? JSON.parse(localStorage.getItem('sessionKey')!)
 
   const updateGameProgression = useCallback(
     (move: number, role: string) => {
@@ -195,19 +198,22 @@ const App = () => {
   }
 
   const { data: sessionData } = trpc.getSession.useQuery(
-    { sessionKey: 'tttkey123' }, // fill in accordingly
+    { sessionKey: sessionKey! },
     {
       refetchInterval: 0,
-      onSuccess: (data) => {
-        setGameState((prev) => {
-          return {
-            ...prev,
-            opponentMoves: structuredClone(data.data.session.ai_moves),
-          }
-        })
-      },
     }
   )
+
+  useEffect(() => {
+    if (sessionData) {
+      setGameState((prev) => {
+        return {
+          ...prev,
+          opponentMoves: structuredClone(sessionData.data.session.ai_moves),
+        }
+      })
+    }
+  }, [sessionData])
 
   return (
     <Box
@@ -263,5 +269,3 @@ const App = () => {
     </Box>
   )
 }
-
-export default App

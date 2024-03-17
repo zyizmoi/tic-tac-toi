@@ -1,13 +1,13 @@
 {
   "name": "test-trpc",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "frontend": "pnpm --filter ./packages/frontend run dev",
     "backend": "pnpm --filter ./packages/backend run dev",
-    "all": "pnpm run frontend && pnpm run backend "
+    "all": "pnpm run --parallel /^dev.*/"
   },
   "workspaces": [
     "packages/frontend",

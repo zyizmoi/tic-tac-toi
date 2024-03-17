@@ -1,6 +1,6 @@
 # Tic-Tac-Toi
 
-(WIP) Tic tac toe game with slighlty modified AI rules (for educational purposes). Also a famliarisation project for using tRPC with NPM workspaces + Supabase DB. Adapted from https://github.com/mnik01/viteRPC.
+(WIP) Tic tac toe game with slighlty modified AI rules (for educational purposes). Also a famliarisation project for using tRPC + Supabase DB. Adapted from https://github.com/mnik01/viteRPC.
 
 ## Setup
 
@@ -15,14 +15,14 @@ SUPABASE_KEY=
 Install and run application:
 
 ```sh
-npm i
+pnpm i
 
 # start both
-npm run all
+pnpm run all
 
 # OR in sepearate terminals:
-npm run frontend
-npm run backend
+pnpm run frontend
+pnpm run backend
 ```
 
 ## Roadmap
