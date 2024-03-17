@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useState } from 'react'
 import trpc from '../utils/trpc'
 import { boardStateType, gameProgressionType, gameRole, gameStateType, keys, winnerPlayer } from '../types/game.types'
-import { Box, Button, Typography } from '@mui/material'
+import { Box, Button, Stack, Typography } from '@mui/material'
 import { Entries } from 'type-fest'
 import { useParams } from 'react-router-dom'
+import { useAuth } from '../hooks/useAuth'
 
 const baseState: gameStateType = {
   opponent: gameRole.x,
@@ -59,6 +60,7 @@ export const Component = () => {
   const [gameState, setGameState] = useState<gameStateType>(structuredClone(baseState))
   const params = useParams()
   const sessionKey = params.sessionKey ?? JSON.parse(localStorage.getItem('sessionKey')!)
+  const { endSession } = useAuth()
 
   const updateGameProgression = useCallback(
     (move: number, role: string) => {
@@ -264,9 +266,14 @@ export const Component = () => {
           )
         })}
       </Box>
-      <Button variant='contained' color='inherit' onClick={handleReset}>
-        Reset
-      </Button>
+      <Stack sx={{ flexDirection: 'row', columnGap: '10%', width: '100%', alignItems: 'center', justifyContent: 'center' }}>
+        <Button variant='contained' color='inherit' onClick={handleReset} sx={{ textTransform: 'none', fontSize: '1rem' }}>
+          Reset
+        </Button>
+        <Button variant='contained' color='warning' onClick={endSession} sx={{ textTransform: 'none', fontSize: '1rem' }}>
+          Leave Session
+        </Button>
+      </Stack>
     </Box>
   )
 }
